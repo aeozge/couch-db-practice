@@ -18,8 +18,7 @@
       font-size: 30px;
     }
     ul {
-      margin-right: 40px;
-      margin-left: 340px;
+      margin-left: 38%;
     }
     li {
       inline-size: 350px;
@@ -28,9 +27,16 @@
 
   <body>
     <h3>Add Coffee:</h3>
+    <% if(errors != undefined){ %>
+      <ul>
+        <% errors.forEach(function(error){ %>
+        <li style="color: red"><%= error.msg %></li>
+        <% }) %>
+      </ul>
+      <% } %>
 
     <form method="POST" action="/coffee/add">
-      <label>* Coffee Name:</label><br />
+      <label>Coffee Name:</label><br />
       <input type="text" size="50" name="name" /><br />
 
       <br />
@@ -39,7 +45,7 @@
       <input type="radio" name="coffee_type" id="cold" value="cold" />COLD<br />
       <br />
 
-      <label>* Flavor:</label><br />
+      <label>Flavor:</label><br />
       <input type="text" size="50" name="flavor" /><br />
       <br />
       <input type="hidden" size="50" name="review" />

@@ -7,6 +7,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const NodeCouchDb = require("node-couchdb");
 const path = require("path");
+const { check, validationResult } = require("express-validator");
 
 // Global Vars
 app.use(function (req, res, next) {
@@ -60,32 +61,48 @@ app.get("/", function (req, res) {
 });
 
 //STORE Coffee
-app.post("/coffee/add", function (req, res) {
-  couchExternal.get(dbName, viewUrl2).then(
-    function (data, headers, status) {
-      res.render("index", {
-        allcoffee: data.data.rows,
-      });
-    },
-    function (err) {
-      res.send(err);
+app.post(
+  "/coffee/add",
+  [
+    check("name").not().isEmpty().withMessage("Name is a required field."),
+    check("coffee_type").not().isEmpty().withMessage("Need to choose Coffee Type"),
+    check("flavor")
+      .not()
+      .isEmpty()
+      .withMessage("Flavor is a required field."),
+  ],
+  function (req, res) {
+    const errors = validationResult(req);
+    // If there are missing field render index again with errors, and with data from couchDB
+    if (!errors.isEmpty()) {
+      couchExternal.get(dbName, viewUrl2).then(
+        function (data, headers, status) {
+          res.render("index", {
+            allcoffee: data.data.rows,
+            errors: errors.array(),
+          });
+        },
+        function (err) {
+          res.send(err);
+        }
+      );
+    } else {
+      let newCoffee = {
+        name: req.body.name,
+        coffee_type: req.body.coffee_type,
+        flavor: req.body.flavor,
+      };
+      couchExternal.insert(dbName, newCoffee).then(
+        function (data, headers, status) {
+          res.redirect("/");
+        },
+        function (err) {
+          res.send(err);
+        }
+      );
     }
-  );
-
-  let newCoffee = {
-    name: req.body.name,
-    coffee_type: req.body.coffee_type,
-    flavor: req.body.flavor,
-  };
-  couchExternal.insert(dbName, newCoffee).then(
-    function (data, headers, status) {
-      res.redirect("/");
-    },
-    function (err) {
-      res.send(err);
-    }
-  );
-});
+  }
+);
 
 app.listen(3000, function () {
   console.log("Server is started on Port 3000");
