@@ -9,12 +9,35 @@
     h3 {
       font-size: 45px;
     }
+    h4 {
+      font-size: 35px;
+      text-decoration: underline;
+    }
 
+    label {
+      font-size: 30px;
+    }
   </style>
 
   <body>
-    <h3>Welcome</h3>
     <h3>Add Coffee:</h3>
-    
+
+    <form>
+      <label>Coffee Name:</label><br />
+      <input type="text" size="50" name="name" /><br />
+
+      <br />
+      <label>Coffee Type(Drinkable):</label><br />
+      <input type="radio" name="coffee_type" id="hot" value="hot" />HOT
+      <input type="radio" name="coffee_type" id="cold" value="cold" />COLD<br />
+      <br />
+
+      <label>Flavor:</label><br />
+      <input type="text" size="50" name="flavor" /><br />
+      <br />
+
+      <input type="submit" value="Submit" />
+    </form>
+    <h4>All Coffee</h4>
   </body>
 </html>
