@@ -17,13 +17,20 @@
     label {
       font-size: 30px;
     }
+    ul {
+      margin-right: 40px;
+      margin-left: 340px;
+    }
+    li {
+      inline-size: 350px;
+    }
   </style>
 
   <body>
     <h3>Add Coffee:</h3>
 
-    <form>
-      <label>Coffee Name:</label><br />
+    <form method="POST" action="/coffee/add">
+      <label>* Coffee Name:</label><br />
       <input type="text" size="50" name="name" /><br />
 
       <br />
@@ -32,12 +39,24 @@
       <input type="radio" name="coffee_type" id="cold" value="cold" />COLD<br />
       <br />
 
-      <label>Flavor:</label><br />
+      <label>* Flavor:</label><br />
       <input type="text" size="50" name="flavor" /><br />
       <br />
-
+      <input type="hidden" size="50" name="review" />
       <input type="submit" value="Submit" />
+
     </form>
     <h4>All Coffee</h4>
+    <ul>
+      <% allcoffee.forEach(function(coffee){ %>
+      <li>
+        <%= coffee.doc.name %> - <%= coffee.doc.flavor %> - <%=
+        coffee.doc.coffee_type %> Drink
+        <br />
+        <br />
+       
+      </li>
+      <% }); %>
+    </ul>
   </body>
 </html>
