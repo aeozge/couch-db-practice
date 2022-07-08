@@ -18,22 +18,23 @@
       font-size: 30px;
     }
     ul {
-      margin-left: 38%;
+      margin-right: 40px;
+      margin-left: 36%;
     }
     li {
-      inline-size: 350px;
+      inline-size: 300px;
     }
   </style>
 
   <body>
     <h3>Add Coffee:</h3>
     <% if(errors != undefined){ %>
-      <ul>
-        <% errors.forEach(function(error){ %>
-        <li style="color: red"><%= error.msg %></li>
-        <% }) %>
-      </ul>
-      <% } %>
+    <ul>
+      <% errors.forEach(function(error){ %>
+      <li style="color: red"><%= error.msg %></li>
+      <% }) %>
+    </ul>
+    <% } %>
 
     <form method="POST" action="/coffee/add">
       <label>Coffee Name:</label><br />
@@ -48,19 +49,26 @@
       <label>Flavor:</label><br />
       <input type="text" size="50" name="flavor" /><br />
       <br />
-      <input type="hidden" size="50" name="review" />
       <input type="submit" value="Submit" />
-
     </form>
+    
     <h4>All Coffee</h4>
     <ul>
       <% allcoffee.forEach(function(coffee){ %>
       <li>
         <%= coffee.doc.name %> - <%= coffee.doc.flavor %> - <%=
-        coffee.doc.coffee_type %> Drink
-        <br />
-        <br />
-       
+        coffee.doc.coffee_type %> Drink &nbsp;
+
+        <form method="POST" action="/coffee/delete/<%= coffee.id %>">
+          <input
+            type="submit"
+            name="delete"
+            value="Delete"
+            onClick="return confirm('Are you sure you want to delete?')"
+          />
+          <input type="hidden" name="_method" value="delete" />
+          <input type="hidden" name="rev" value="<%= coffee.value.rev %>" />
+        </form>
       </li>
       <% }); %>
     </ul>

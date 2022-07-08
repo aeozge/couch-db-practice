@@ -1,6 +1,4 @@
-const fs = require("fs");
-const https = require("https");
-
+"use strict";
 const express = require("express");
 const app = express();
 
@@ -20,6 +18,19 @@ app.use(bodyParser.json());
 
 //support parsing of application/x-www-form-urlencoded post data
 app.use(bodyParser.urlencoded({ extended: true }));
+
+const methodOverride = require("method-override");
+app.use(methodOverride("_method", { methods: ["POST", "GET"] }));
+app.use(
+  methodOverride(function (req, res) {
+    if (req.body && typeof req.body === "object" && "_method" in req.body) {
+      // look in urlencoded POST bodies and delete it
+      let method = req.body._method;
+      delete req.body._method;
+      return method;
+    }
+  })
+);
 
 // Connect to CouchDB
 const couchExternal = new NodeCouchDb({
@@ -42,13 +53,12 @@ couchExternal.listDatabases().then(function (dbs) {
 const dbName = "allcoffee";
 
 //all is the name of the MapReduce views
-const viewUrl2 = "/_all_docs?include_docs=true";
+const viewUrl = "/_all_docs?include_docs=true";
 
 //WEB ROUTES
-
-//INDEX root website/SHOW
+//GET ALL Coffee
 app.get("/", function (req, res) {
-  couchExternal.get(dbName, viewUrl2).then(
+  couchExternal.get(dbName, viewUrl).then(
     function (data, headers, status) {
       res.render("index", {
         allcoffee: data.data.rows,
@@ -73,9 +83,9 @@ app.post(
   ],
   function (req, res) {
     const errors = validationResult(req);
-    // If there are missing field render index again with errors, and with data from couchDB
+    
     if (!errors.isEmpty()) {
-      couchExternal.get(dbName, viewUrl2).then(
+      couchExternal.get(dbName, viewUrl).then(
         function (data, headers, status) {
           res.render("index", {
             allcoffee: data.data.rows,
@@ -103,6 +113,19 @@ app.post(
     }
   }
 );
+
+//DELETE Coffee
+app.delete("/coffee/delete/:_id", function (req, res) {
+  couchExternal.del(dbName, req.params._id, req.body.rev).then(
+    function (data, headers, status) {
+      res.redirect("/");
+    },
+    function (err) {
+      res.send(err);
+    }
+  );
+});
+
 
 app.listen(3000, function () {
   console.log("Server is started on Port 3000");
