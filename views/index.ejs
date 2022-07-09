@@ -31,7 +31,7 @@
     <% if(errors != undefined){ %>
     <ul>
       <% errors.forEach(function(error){ %>
-      <li style="color: red"><%= error.msg %></li>
+      <li style="color: red"><%= error.msg %></li>~
       <% }) %>
     </ul>
     <% } %>
@@ -51,13 +51,13 @@
       <br />
       <input type="submit" value="Submit" />
     </form>
-    
+
     <h4>All Coffee</h4>
     <ul>
       <% allcoffee.forEach(function(coffee){ %>
       <li>
         <%= coffee.doc.name %> - <%= coffee.doc.flavor %> - <%=
-        coffee.doc.coffee_type %> Drink &nbsp;
+        coffee.doc.coffee_type %> Drink - <a href='/coffee/edit/<%= coffee.id %>'>Update</a>&nbsp;
 
         <form method="POST" action="/coffee/delete/<%= coffee.id %>">
           <input
@@ -69,6 +69,7 @@
           <input type="hidden" name="_method" value="delete" />
           <input type="hidden" name="rev" value="<%= coffee.value.rev %>" />
         </form>
+
       </li>
       <% }); %>
     </ul>

@@ -126,7 +126,63 @@ app.delete("/coffee/delete/:_id", function (req, res) {
   );
 });
 
+//UPDATE COFFEE
+app.get("/coffee/edit/:_id", function (req, res) {
+  couchExternal.get(dbName, req.params._id).then(
+    function (data, headers, status) {
+      res.render("update", {
+        coffee: data.data,
+      });
+    },
+    function (err) {
+      res.send(err);
+    }
+  );
+});
 
+app.post(
+  "/coffee/edit/:_id",
+  [
+    check("name").not().isEmpty().withMessage("Name is a required field."),
+    check("coffee_type").not().isEmpty().withMessage("Need to choose Coffee Type"),
+    check("flavor")
+      .not()
+      .isEmpty()
+      .withMessage("Flavor is a required field."),
+  ],
+  function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      couchExternal.get(dbName, req.params._id).then(
+        function (data, headers, status) {
+          res.render("update", {
+            coffee: data.data,
+            errors: errors.array(),
+          });
+        },
+        function (err) {
+          res.send(err);
+        }
+      );
+    } else {
+      let newCoffee = {
+        _id: req.params._id,
+        _rev: req.body.rev,
+        name: req.body.name,
+        coffee_type: req.body.coffee_type,
+        flavor: req.body.flavor
+      };
+      couchExternal.update(dbName, newCoffee).then(
+        function (data, headers, status) {
+          res.redirect("/");
+        },
+        function (err) {
+          res.send(err);
+        }
+      );
+    }
+  }
+);
 app.listen(3000, function () {
   console.log("Server is started on Port 3000");
 });

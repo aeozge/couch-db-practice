@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <title>CouchDB - NodeJS</title>
+  </head>
+  <style>
+    body {
+      text-align: center;
+    }
+    h3 {
+      font-size: 45px;
+    }
+    h4 {
+      font-size: 35px;
+      text-decoration: underline;
+    }
+
+    label {
+      font-size: 30px;
+    }
+    ul {
+      margin-right: 40px;
+      margin-left: 36%;
+    }
+    li {
+      inline-size: 300px;
+    }
+  </style>
+  <body>
+    <h3>Update coffee:</h3>
+    <% if(errors != undefined){ %>
+    <ul>
+      <% errors.forEach(function(error){ %>
+      <li style="color: red"><%= error.msg %></li>
+      <% }) %>
+    </ul>
+    <% } %>
+        
+
+    <form method="POST" action="/coffee/edit/<%= coffee._id %>">
+        <label>Name :</label><br>
+        <input type="text" name="name", value=<%= coffee.name %>><br>
+        
+        <label>Coffee Type :</label><br>
+        <input type="radio" name="coffee_type" id="hot" value="hot" />HOT
+        <input type="radio" name="coffee_type" id="cold" value="cold" />COLD<br />
+        
+        <label>Flavor :</label><br>
+        <input type="text" name="flavor", value=<%= coffee.flavor %>><br>
+        
+        <br>
+        <input type="hidden" name="rev" value="<%= coffee._rev %>" />
+        <input type="submit" value="Update">
+        </form>
+        <!-- <h4>
+            <%= coffee._rev %>
+            <%= coffee.name %>
+        </h4> -->
+
+  </body>
+</html>
